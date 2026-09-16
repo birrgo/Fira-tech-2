@@ -90,6 +90,10 @@ jobs:
           if [ -f node_modules/capacitor-admob-nextgen/scripts/admob-manifest.js ]; then node node_modules/capacitor-admob-nextgen/scripts/admob-manifest.js; fi
           if [ -f node_modules/capacitor-admob-nextgen/scripts/admob-native.js ]; then node node_modules/capacitor-admob-nextgen/scripts/admob-native.js; fi
 
+      - name: Add Notification Permissions to Manifest
+        run: |
+          sed -i '/<uses-permission android:name="android.permission.INTERNET" \/>/a \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" \/>\n    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" \/>' android/app/src/main/AndroidManifest.xml
+
       - name: Target Android SDK 36
         run: |
           if [ -f android/variables.gradle ]; then
@@ -132,5 +136,7 @@ jobs:
               "app_id": "${{ secrets.ONESIGNAL_APP_ID }}",
               "included_segments": ["Subscribed Users"],
               "headings": {"en": "${{ env.APP_NAME }} Updated!"},
-              "contents": {"en": "A new version or item has been posted. Open the app to check it out!"}
+              "contents": {"en": "A new version or item has been posted. Open the app to check it out!"},
+              "priority": 10,
+              "android_visibility": 1
             }'
